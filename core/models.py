@@ -1,5 +1,11 @@
 from django.db import models
 from django.urls import reverse
+from django.contrib.auth.models import AbstractUser
+
+
+class User(AbstractUser):
+        balance = models.IntegerField(null=False, default=1000)
+
 
 class VirtualMachine(models.Model):
     create_date = models.DateTimeField(auto_now=True)
@@ -15,6 +21,7 @@ class VirtualMachine(models.Model):
     ]
     hdd_type = models.CharField(max_length=15, choices=hdd_type_choices, verbose_name='Тип жёсткого диска')
     hdd_capacity = models.IntegerField(null=False, verbose_name='Объём памяти жёсткого диска')
+    current_user = models.ForeignKey(User, on_delete=models.PROTECT, null=True)
 
     def __str__(self):
         return 'cpu - %s, ram - %s, hdd_type - %s, hdd_capacity - %s' % (self.cpu ,self.ram ,self.hdd_type ,self.hdd_capacity)
