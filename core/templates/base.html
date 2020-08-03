@@ -15,6 +15,9 @@
       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
   Новый заказ
       </button>
+      <div class="nav-right">
+         <a href="{% url 'vm_new' %}">+ New VM</a>
+       </div>
     <h1 class="mt-4">Cloud application</h1>
     {% for virtual_machine in virtual_machines_list %}
     <ul class="list-group mt-4">
@@ -28,6 +31,8 @@
       </li>
     </ul>
     {% endfor %}
+    {% block content %}
+    {% endblock content %}
     </div>
 
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -40,17 +45,20 @@
           </button>
         </div>
     <div class="modal-body">
-      <form id="add_form" method="get">
+      <form id="add_form" method="post">
+        {% csrf_token %}
         {{form}}
       </form>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Отправить заказ</button>
+        <button type="button" class="btn btn-primary">Сохранить заказ</button>
       </div>
     </div>
   </div>
 </div>
+
+
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

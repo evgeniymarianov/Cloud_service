@@ -12,20 +12,25 @@
   </head>
   <body>
 
+
     <div class="container mt-4">
       <ul class="nav">
       <li class="nav-item">
       <a class="nav-link active" href="{% url 'home' %}">Вернуться к списку заказов</a>
       </li>
       </ul>
-
+{% if success %}
+<p>Запись добавлена</p>
+{% endif %}
     <table class="table">
       <thead class="thead-light">
         <tr>
-          <th scope="col">#</th>
-          <th scope="col">First</th>
-          <th scope="col">Last</th>
-          <th scope="col">Handle</th>
+          <th scope="col">id</th>
+          <th scope="col">Дата создания</th>
+          <th scope="col">cpu</th>
+          <th scope="col">ram</th>
+          <th scope="col">hdd_type</th>
+          <th scope="col">hdd_capacity</th>
         </tr>
       </thead>
       <tbody>
@@ -33,9 +38,13 @@
         {% for virtual_machine in virtual_machines_list %}
         <tr>
           <th>{{virtual_machine.id}}</th>
-          <td>{{virtual_machine.id}}</td>
-          <td>Otto</td>
-          <td>@mdo</td>
+          <td>{{virtual_machine.create_date}}</td>
+          <td>{{virtual_machine.cpu}}</td>
+          <td>{{virtual_machine.ram}}</td>
+          <td>{{virtual_machine.hdd_type}}</td>
+          <td>{{virtual_machine.hdd_capacity}}</td>
+          <td><a href=""></a>Редактировать</td>
+          <td><a href=""></a>Удалить</td>
         </tr>
         {% endfor %}
     </tbody>

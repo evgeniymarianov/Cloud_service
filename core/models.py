@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 class VirtualMachine(models.Model):
     create_date = models.DateTimeField(auto_now=True)
@@ -17,6 +18,9 @@ class VirtualMachine(models.Model):
 
     def __str__(self):
         return 'cpu - %s, ram - %s, hdd_type - %s, hdd_capacity - %s' % (self.cpu ,self.ram ,self.hdd_type ,self.hdd_capacity)
+
+    def get_absolute_url(self):
+        return reverse('detail', args=[str(self.id)])
 
     class Meta:
         verbose_name='Виртуальную машину'
