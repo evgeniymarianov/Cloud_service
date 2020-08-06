@@ -1,0 +1,9 @@
+{% block content %}
+    <h1>Авторизация</h1>
+    <form id="add_form" method="post">
+      {% csrf_token %}
+      {{form}}
+    <div class="modal-footer">
+    <button type="submit" class="btn btn-primary">Войти</button>
+  </form>
+{% endblock content %}

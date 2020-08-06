@@ -12,17 +12,21 @@
   </head>
   <body>
     <div class="container mt-4">
-      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-  Новый заказ
-      </button>
-      <div class="nav-right">
-         <a href="{% url 'vm_new' %}">+ New VM</a>
-       </div>
+      <div class="nav-item">
+         <a href="{% url 'vm_new' %}">Создать заказ</a>
+      </div>
+      <div class="nav-item">
+         <a href="{% url 'login' %}">Войти</a>
+      </div>
+      <div class="nav-item">
+         <a href="{% url 'register' %}">Регистрация</a>
+      </div>
+      {{ request.user }}
     <h1 class="mt-4">Cloud application</h1>
     {% for virtual_machine in virtual_machines_list %}
     <ul class="list-group mt-4">
       <li class="list-group-item">
-        <b>Crated at {{ virtual_machine.create_date }}  </b>
+        <b>Crated at {{ virtual_machine.create_date }} - {{virtual_machine.current_user}}  </b>
         <b>CPU = {{ virtual_machine.cpu }}</b>
         <b>RAM = {{ virtual_machine.ram }}</b>
         <b>HDD type = {{ virtual_machine.type }}</b>

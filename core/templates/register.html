@@ -1,0 +1,9 @@
+{% block content %}
+    <h1>Регистрация</h1>
+      <form id="add_form" method="post">
+        {% csrf_token %}
+        {{form}}
+      <div class="modal-footer">
+      <button type="submit" class="btn btn-primary">Добавить</button>
+    </form>
+{% endblock content %}
