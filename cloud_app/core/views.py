@@ -5,8 +5,10 @@ from django.views.generic import ListView, DetailView, CreateView
 from .forms import VirtualMachineForm, RegisterUserForm, AuthUserForm
 from django.contrib.auth.views import LoginView
 from django.urls import reverse, reverse_lazy
+from django.http import HttpResponse
+from .service import CheckService
 # from django.contrib.auth.mixins import LoginRequiredMixin
-
+import requests
 
 def home(request):
     context = {
@@ -29,6 +31,19 @@ def edit_page(request):
     'success': success
     }
     return render(request, 'edit_page.html', context)
+
+def check(request):
+    if not request.user.is_authenticated:
+        return HttpResponse("You are no Authenticated")
+    print(request.GET.get("cpu", "what?"))
+    print("!!!!!!!!!!!!!!!!")
+    res = CheckService()
+    return res.check_configs(request)
+
+#class Check(View):
+
+    #def get(self, request):
+        #return render(request, )
 
 class MyprojectLoginView(LoginView):
     model = VirtualMachine
