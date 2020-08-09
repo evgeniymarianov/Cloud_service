@@ -3,6 +3,13 @@ from django.http import HttpResponse, QueryDict
 from .models import VirtualMachine
 
 class CheckService:
+    possibility = False
+    total = 0
+
+    def __init__(self, request):
+        self.possibility = check_configs(request)
+        self.total = check_bill(request)
+
 
     def check_configs(self, request):
         params =  QueryDict(request.META['QUERY_STRING'], mutable=True)
@@ -23,5 +30,12 @@ class CheckService:
                         new_virtual_machine = VirtualMachine(cpu=params['cpu'], ram=params['ram'], hdd_type=params['hdd_type'], hdd_capacity=params['hdd_capacity'])
                         new_virtual_machine.save()
                         print('succ')
-                        return HttpResponse("Hello, world. HttpResponse from servvice succ")
-        return HttpResponse("Hello, world. HttpResponse from servvice.............")
+                        return True
+        return False
+
+        def check_bill(self, request):
+            url = 'http://service_http:5000/price/' + request.META['QUERY_STRING']
+            response = requests.get(url)
+            print(response)
+            print('check_balance fin')
+            pass

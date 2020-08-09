@@ -37,8 +37,7 @@ def check(request):
         return HttpResponse("You are no Authenticated")
     print(request.GET.get("cpu", "what?"))
     print("!!!!!!!!!!!!!!!!")
-    res = CheckService()
-    return res.check_configs(request)
+    check_service = CheckService(request)
 
 #class Check(View):
 
