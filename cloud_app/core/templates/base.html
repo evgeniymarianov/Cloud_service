@@ -22,6 +22,7 @@
          <a href="{% url 'register' %}">Регистрация</a>
       </div>
       {{ request.user }}
+      {{ request.user.balance }}
     <h1 class="mt-4">Cloud application</h1>
     {% for virtual_machine in virtual_machines_list %}
     <ul class="list-group mt-4">

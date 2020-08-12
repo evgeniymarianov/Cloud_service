@@ -6,9 +6,7 @@ import json
 class CheckService:
     def __init__(self, request):
         self.balance_after_transaction = 0
-        self.conf_possobility = False
-        self.data = 0
-        #if self.check_configs(request):
+        self.configuration_availability = False
         self.check_configs(request)
         print('check_configs ok')
         self.check_bill(request)
@@ -37,7 +35,7 @@ class CheckService:
                         new_virtual_machine = VirtualMachine(cpu=params['cpu'], ram=params['ram'], hdd_type=params['hdd_type'], hdd_capacity=params['hdd_capacity'])
                         new_virtual_machine.save()
                         print('succ')
-                        self.conf_possobility = True
+                        self.configuration_availability = True
                         pass
         pass
 
@@ -45,7 +43,7 @@ class CheckService:
     def check_bill(self, request):
         print('check_bill!!!!!!!!!!!!!!!!!')
         url = 'http://cost_service:5000/price/?' + request.META['QUERY_STRING']
-        self.total_cost = requests.get(url).json()
+        self.total_cost = round(requests.get(url).json(), 2)
         # print(str(response) + str('>>>>>>>>>>>>>>>response'))
         print('check_balance fin')
         self.balance_after_transaction = request.user.balance - self.total_cost
@@ -55,9 +53,11 @@ class CheckService:
 
     def message(self, request):
         print(self.balance_after_transaction)
-        print(self.conf_possobility)
+        print(self.configuration_availability)
         data = {}
-        if self.conf_possobility and (self.balance_after_transaction > 0):
+        print('!!!!!!')
+        print(self.configuration_availability and (self.balance_after_transaction >= 0))
+        if self.configuration_availability and (self.balance_after_transaction >= 0):
             data = {
                 'answer': {
                     'result': True,
@@ -66,6 +66,30 @@ class CheckService:
                     'balance_after_transaction': self.balance_after_transaction,
                 },
                 'status': 'ok'
+            }
+        elif (self.configuration_availability == False) or (self.balance_after_transaction < 0):
+            data = {
+                'answer': {
+                    'result': False,
+                    'error': 'incorrect VM configuration or insufficient funds are used'
+                },
+                'status': 'not_acceptable'
+            }
+        elif (request.user == False) or (request.user.balance == False):
+            data = {
+                'answer': {
+                    'result': False,
+                    'error': 'the current session does not have a username or balance'
+                },
+                'status': 'unauthorized'
+            }
+        else:
+            data = {
+                'answer': {
+                    'result': False,
+                    'error': 'error accessing the external system'
+                },
+                'status': 'service_unavailable'
             }
         self.data = json.dumps(data)
         pass
