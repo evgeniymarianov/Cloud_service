@@ -38,6 +38,8 @@ def check(request):
     print(request.GET.get("cpu", "what?"))
     print("!!!!!!!!!!!!!!!!")
     check_service = CheckService(request)
+    # return render(request, 'base.html')
+    return HttpResponse(check_service.data)
 
 #class Check(View):
 

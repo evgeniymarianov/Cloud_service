@@ -14,7 +14,7 @@ services:
      DATABASE_URL: postgres://postgres@db/postgres
 
   cost_service:
-    image: cost_service
+    image: cost_s6
     ports:
       - 5000:5000
 
