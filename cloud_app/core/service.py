@@ -8,21 +8,15 @@ class CheckService:
         self.balance_after_transaction = 0
         self.configuration_availability = False
         self.check_configs(request)
-        print('check_configs ok')
         self.check_bill(request)
-        print('check_bill ok')
         self.message(request)
         pass
 
 
     def check_configs(self, request):
-        print('check_configs!!!!!!!!!!!!!!!!!')
         params =  QueryDict(request.META['QUERY_STRING'], mutable=True)
-        print(params)
         url = 'http://possible_orders.srv.w55.ru/'
         possible_configs = requests.get(url).json()['specs']
-        print(possible_configs)
-        print("!!!!!!!!!!!!!!!!")
         for k, v in params.items():
             params['cpu'] = int(params['cpu'])
             params['ram'] = int(params['ram'])
@@ -34,29 +28,20 @@ class CheckService:
                     if min <= int(params['hdd_capacity']) <= max:
                         new_virtual_machine = VirtualMachine(cpu=params['cpu'], ram=params['ram'], hdd_type=params['hdd_type'], hdd_capacity=params['hdd_capacity'])
                         new_virtual_machine.save()
-                        print('succ')
                         self.configuration_availability = True
                         pass
         pass
 
 
     def check_bill(self, request):
-        print('check_bill!!!!!!!!!!!!!!!!!')
         url = 'http://cost_service:5000/price/?' + request.META['QUERY_STRING']
         self.total_cost = round(requests.get(url).json(), 2)
-        # print(str(response) + str('>>>>>>>>>>>>>>>response'))
-        print('check_balance fin')
         self.balance_after_transaction = request.user.balance - self.total_cost
-        print(str(self.balance_after_transaction) + '---------balance_after_transaction')
         pass
 
 
     def message(self, request):
-        print(self.balance_after_transaction)
-        print(self.configuration_availability)
         data = {}
-        print('!!!!!!')
-        print(self.configuration_availability and (self.balance_after_transaction >= 0))
         if self.configuration_availability and (self.balance_after_transaction >= 0):
             data = {
                 'answer': {

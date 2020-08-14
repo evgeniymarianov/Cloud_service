@@ -32,3 +32,8 @@ class VirtualMachine(models.Model):
     class Meta:
         verbose_name='Виртуальную машину'
         verbose_name_plural='Виртуальные машины'
+
+
+class Network(models.Model):
+    name = models.CharField(max_length=30)
+    virtual_machines = models.ManyToManyField(VirtualMachine)
