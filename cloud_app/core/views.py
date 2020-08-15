@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import VirtualMachine, User
 from django.views.generic import ListView, DetailView, CreateView
 from .forms import VirtualMachineForm, RegisterUserForm, AuthUserForm
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse, reverse_lazy
 from django.http import HttpResponse
 from .service import CheckService
@@ -50,6 +50,8 @@ class MyprojectLoginView(LoginView):
     context_object_name = 'virtual_machines_list'
     success_url = reverse_lazy('home')
 
+class MyProjectLogout(LogoutView):
+    next_page = reverse_lazy('edit_page')
 
 class RegisterUserView(CreateView):
     model = User

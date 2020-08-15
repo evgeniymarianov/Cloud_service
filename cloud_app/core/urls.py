@@ -11,6 +11,6 @@ urlpatterns = [
     path('new/', views.VirtualMachineCreateView.as_view(), name='vm_new'),
     path('login/', views.MyprojectLoginView.as_view(), name='login'),
     path('register/', views.RegisterUserView.as_view(), name='register'),
-    # path('logout', views.MyProjectLogout.as_view(), name='logout_page'),
+    path('logout', views.MyProjectLogout.as_view(), name='logout_page'),
     path('check', views.check, name='check'),
 ]
