@@ -33,8 +33,6 @@ def edit_page(request):
     return render(request, 'edit_page.html', context)
 
 def check(request):
-    if not request.user.is_authenticated:
-        return HttpResponse("You are no Authenticated")
     print(request.GET.get("cpu", "what?"))
     print("!!!!!!!!!!!!!!!!")
     check_service = CheckService(request)
