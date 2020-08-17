@@ -26,10 +26,19 @@ class CheckService:
                     min = config['hdd_capacity'][params['hdd_type']]['from']
                     max = config['hdd_capacity'][params['hdd_type']]['to']
                     if min <= int(params['hdd_capacity']) <= max:
-                        new_virtual_machine = VirtualMachine(cpu=params['cpu'], ram=params['ram'], hdd_type=params['hdd_type'], hdd_capacity=params['hdd_capacity'])
-                        new_virtual_machine.save()
                         self.configuration_availability = True
-                        pass
+        if self.configuration_availability:
+            new_virtual_machine = VirtualMachine(
+                cpu=params['cpu'],
+                ram=params['ram'],
+                hdd_type=params['hdd_type'],
+                hdd_capacity=params['hdd_capacity'],
+                current_user=request.user
+            )
+            new_virtual_machine.save()
+            print("!!!!!!!!!!!!!!!!")
+            print(new_virtual_machine.id)
+            pass
         pass
 
 
