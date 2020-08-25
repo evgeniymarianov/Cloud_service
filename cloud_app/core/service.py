@@ -1,6 +1,6 @@
 import requests
 from django.http import HttpResponse, QueryDict
-from .models import VirtualMachine
+from .models import VirtualMachine, Report, User
 import json
 
 class CheckService:
@@ -87,3 +87,14 @@ class CheckService:
             }
         self.data = json.dumps(data)
         pass
+
+
+class CreateReportService:
+    def __init__(self, request):
+        self.create_report(request)
+        pass
+
+
+    def create_report(self, request):
+        vms = VirtualMachine.objects.filter(current_user=request.user)
+        print(vms)

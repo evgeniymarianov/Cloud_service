@@ -4,26 +4,25 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-        balance = models.IntegerField(null=False, default=1000)
+    balance = models.IntegerField(null=False, default=1000)
+    country = models.CharField(max_length=30, null=False, default='Russia')
 
 
 class Network(models.Model):
     name = models.CharField(max_length=30)
-    
+
 
 class VirtualMachine(models.Model):
     create_date = models.DateTimeField(auto_now=True)
     cpu = models.IntegerField(null=False, verbose_name='Количество ядер центрального процессора')
     ram = models.IntegerField(null=False, verbose_name='Оперативная память')
-    sata = 'sata'
-    ssd = 'ssd'
-    sas = 'sas'
-    hdd_type_choices = [
-        (sata, 'sata'),
-        (ssd, 'ssd'),
-        (sas, 'sas'),
-    ]
-    hdd_type = models.CharField(max_length=15, choices=hdd_type_choices, verbose_name='Тип жёсткого диска')
+    hdd_type = models.CharField(choices = (
+            ('sata', 'sata'),
+            ('ssd', 'ssd'),
+            ('sas', 'sas'),
+        ),
+        max_length=15, verbose_name='Тип жёсткого диска'
+    )
     hdd_capacity = models.IntegerField(null=False, verbose_name='Объём памяти жёсткого диска')
     current_user = models.ForeignKey(User, on_delete=models.PROTECT, null=True)
     networks = models.ManyToManyField(Network)
@@ -37,3 +36,12 @@ class VirtualMachine(models.Model):
     class Meta:
         verbose_name='Виртуальную машину'
         verbose_name_plural='Виртуальные машины'
+
+
+class Report(models.Model):
+    """docstring forReport."""
+    create_date = models.DateTimeField(auto_now=True)
+    text = models.TextField(max_length=300, null=False, default='Russia')
+
+    def __init__(self, arg):
+        self.arg = arg

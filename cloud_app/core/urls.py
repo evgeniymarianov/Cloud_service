@@ -13,4 +13,5 @@ urlpatterns = [
     path('register/', views.RegisterUserView.as_view(), name='register'),
     path('logout', views.MyProjectLogout.as_view(), name='logout_page'),
     path('check', views.check, name='check'),
+    path('report', views.report, name='report'),
 ]

@@ -1,12 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
-from .models import VirtualMachine, User
+from .models import VirtualMachine, User, Report
 from django.views.generic import ListView, DetailView, CreateView
 from .forms import VirtualMachineForm, RegisterUserForm, AuthUserForm
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse, reverse_lazy
 from django.http import HttpResponse
-from .service import CheckService
+from .service import CheckService, CreateReportService
 # from django.contrib.auth.mixins import LoginRequiredMixin
 import requests
 
@@ -39,10 +39,9 @@ def check(request):
     # return render(request, 'base.html')
     return HttpResponse(check_service.data)
 
-#class Check(View):
-
-    #def get(self, request):
-        #return render(request, )
+def report(request):
+    create_report = CreateReportService(request)
+    return HttpResponse('OKey')
 
 class MyprojectLoginView(LoginView):
     model = VirtualMachine

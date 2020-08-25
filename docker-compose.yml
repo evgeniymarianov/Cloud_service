@@ -10,8 +10,10 @@ services:
     depends_on:
     - db
     - cost_service
+    - redis
     environment:
      DATABASE_URL: postgres://postgres@db/postgres
+     REDIS_URL: redis://redis:6379/0
 
   cost_service:
     image: cost_s6
@@ -22,3 +24,10 @@ services:
     image: postgres:12.2
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
+
+  redis:
+    image: redis:5-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis:/data
