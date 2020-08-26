@@ -2,7 +2,7 @@ version: '3'
 services:
   web:
     build: ./cloud_app
-    command: python3 ./manage.py runserver 0.0.0.0:8000
+    command: bash -c "python3 ./manage.py runserver 0.0.0.0:8000 && python3 ./manage.py migrate && celery -A cloud_app worker -l info"
     ports:
     - 8000:8000
     volumes:
@@ -12,8 +12,11 @@ services:
     - cost_service
     - redis
     environment:
-     DATABASE_URL: postgres://postgres@db/postgres
-     REDIS_URL: redis://redis:6379/0
+      - DEBUG=1
+      - REDIS_HOST=redis
+      - DATABASE_URL=postgres://postgres@db/postgres
+      - CELERY_BROKER=redis://redis:6379/0
+      - CELERY_BACKEND=redis://redis:6379/0
 
   cost_service:
     image: cost_s6

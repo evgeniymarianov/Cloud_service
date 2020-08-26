@@ -6,7 +6,8 @@ from .forms import VirtualMachineForm, RegisterUserForm, AuthUserForm
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse, reverse_lazy
 from django.http import HttpResponse
-from .service import CheckService, CreateReportService
+from .service import CheckService, CreateReportService, create_report
+from .tasks import create_report_task
 # from django.contrib.auth.mixins import LoginRequiredMixin
 import requests
 
@@ -40,7 +41,9 @@ def check(request):
     return HttpResponse(check_service.data)
 
 def report(request):
-    create_report = CreateReportService(request)
+    user_id = request.user.id
+    print(user_id)
+    create_report_task.delay(user_id)
     return HttpResponse('OKey')
 
 class MyprojectLoginView(LoginView):

@@ -42,6 +42,3 @@ class Report(models.Model):
     """docstring forReport."""
     create_date = models.DateTimeField(auto_now=True)
     text = models.TextField(max_length=300, null=False, default='Russia')
-
-    def __init__(self, arg):
-        self.arg = arg
