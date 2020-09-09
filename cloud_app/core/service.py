@@ -89,22 +89,11 @@ class CheckService:
         pass
 
 
-class CreateReportService:
-    def __init__(self, request):
-        self.create_report(request)
-        pass
-
-
-    def create_report(self, request):
-        vms = VirtualMachine.objects.filter(current_user=request.user)
-        print(vms)
-
-
 def create_report(user_id):
     print('!!!!!!!!!!!!!!servicsssssssssssssssssss')
     user = User.objects.get(id=user_id)
     vms = VirtualMachine.objects.filter(current_user=user)
-    print('!!!!!!!!!!!!!!servic')
+    print('!!!!!!!!!!!!!!service')
     q = Report(text="It's ok?")
     q.save()
     print(vms)

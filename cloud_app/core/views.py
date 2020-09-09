@@ -6,7 +6,7 @@ from .forms import VirtualMachineForm, RegisterUserForm, AuthUserForm
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse, reverse_lazy
 from django.http import HttpResponse
-from .service import CheckService, CreateReportService, create_report
+from .service import CheckService, create_report
 from .tasks import create_report_task
 # from django.contrib.auth.mixins import LoginRequiredMixin
 import requests
