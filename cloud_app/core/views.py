@@ -7,7 +7,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse, reverse_lazy
 from django.http import HttpResponse
 from .service import CheckService, create_report
-from .tasks import create_report_task
+from .tasks import create_reports_task
 # from django.contrib.auth.mixins import LoginRequiredMixin
 import requests
 
@@ -36,15 +36,16 @@ def edit_page(request):
 def check(request):
     print(request.GET.get("cpu", "what?"))
     print("!!!!!!!!!!!!!!!!")
+    print(current_user())
     check_service = CheckService(request)
     # return render(request, 'base.html')
     return HttpResponse(check_service.data)
 
-def report(request):
-    user_id = request.user.id
-    print(user_id)
-    create_report_task.delay(user_id)
-    return HttpResponse('OKey')
+#def report(request):
+    #user_id = request.user.id
+    #print(user_id)
+    #create_report_task.delay(user_id)
+    #return HttpResponse('OKey')
 
 class MyprojectLoginView(LoginView):
     model = VirtualMachine
