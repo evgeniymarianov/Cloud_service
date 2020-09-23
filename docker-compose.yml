@@ -2,7 +2,6 @@ version: '3'
 services:
   web:
     build: ./cloud_app
-    entrypoint: ./entrypoint.sh
     ports:
     - 8000:8000
     volumes:
@@ -17,6 +16,23 @@ services:
       - DATABASE_URL=postgres://postgres@db/postgres
       - CELERY_BROKER=redis://redis:6379/0
       - CELERY_BACKEND=redis://redis:6379/0
+
+  celery:
+    build: ./cloud_app
+    command: celery -A cloud_app worker -l info
+    volumes:
+      - .:/data/cloud_app
+    depends_on:
+      - db
+      - redis
+  celery-beat:
+    build: ./cloud_app
+    command: celery -A cloud_app beat -l info
+    volumes:
+      - .:/data/cloud_app
+    depends_on:
+      - db
+      - redis
 
   cost_service:
     image: cost_s6

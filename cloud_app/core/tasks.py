@@ -1,7 +1,14 @@
 from cloud_app.celery import app
+from celery import shared_task
 
 from .service import create_report
 from .models import User, Report
+
+
+@shared_task
+def hello():
+    print('Hello there!')
+
 
 @app.task
 def create_reports_task():
