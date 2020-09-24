@@ -8,9 +8,9 @@ app = Celery('cloud_app')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
 
-@app.task(bind=True)
-def debug_task(self):
-    print('Request: {0!r}'.format(self.request))
+# @app.task(bind=True)
+# def debug_task(self):
+#     print('Request: {0!r}'.format(self.request))
 
 app.conf.beat_schedule = {
     'create-report-every-2-minute': {

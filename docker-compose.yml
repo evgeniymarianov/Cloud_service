@@ -21,15 +21,17 @@ services:
     build: ./cloud_app
     command: celery -A cloud_app worker -l info
     volumes:
-      - .:/data/cloud_app
+      - ./cloud_app:/data
     depends_on:
       - db
       - redis
+    environment:
+      - DATABASE_URL=postgres://postgres@db/postgres
   celery-beat:
     build: ./cloud_app
     command: celery -A cloud_app beat -l info
     volumes:
-      - .:/data/cloud_app
+      - ./cloud_app:/data
     depends_on:
       - db
       - redis

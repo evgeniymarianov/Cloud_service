@@ -5,9 +5,9 @@ from .service import create_report
 from .models import User, Report
 
 
-@shared_task
-def hello():
-    print('Hello there!')
+# @shared_task
+# def hello():
+#     print('Hello there!')
 
 
 @app.task
