@@ -5,13 +5,14 @@ from .service import create_report
 from .models import User, Report
 
 
-# @shared_task
-# def hello():
-#     print('Hello there!')
+@shared_task
+def hello():
+    print('Hello there!')
 
 
-@app.task
-def create_reports_task():
+# @app.task
+@shared_task
+def create_report_task():
     print('!!!!!!!!!!!!!!task start')
     for user in User.objects.all():
         new_report = Report(text="New Report of user %s" % str(user.username))

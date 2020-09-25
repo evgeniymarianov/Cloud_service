@@ -1,7 +1,9 @@
 import requests
 from django.http import HttpResponse, QueryDict
-from .models import VirtualMachine, Report, User
+from .models import VirtualMachine, Report, User, AdditionalHdd
 import json
+import csv
+
 
 class CheckService:
     def __init__(self, request):
@@ -87,6 +89,28 @@ class CheckService:
             }
         self.data = json.dumps(data)
         pass
+
+
+def load_local_csv(path):
+    with open(str(path) + 'vms.csv') as f:
+        vms_csv = list(csv.reader(f))
+        print(vms_csv[:5])
+
+    with open(str(path) + 'prices.csv') as f:
+        prices = dict(csv.reader(f))
+        print(prices)
+
+    for key, value in prices.items():
+        if key in ['cpu', 'ram', 'hdd_capacity', 'ssd', 'sata', 'sas']:
+            prices[key] = int(value)
+
+    with open(str(path) + 'volumes.csv') as f:
+        vms_volumes = list(csv.reader(f))
+
+    ## for vm in vms_csv:
+    ##     new_virtual_machine = VirtualMachine(
+    ##         ram = int
+    ##     )
 
 
 def create_report(user_id):

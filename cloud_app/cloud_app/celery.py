@@ -12,9 +12,9 @@ app.autodiscover_tasks()
 # def debug_task(self):
 #     print('Request: {0!r}'.format(self.request))
 
-app.conf.beat_schedule = {
-    'create-report-every-2-minute': {
-    'task': 'core.tasks.create_reports_task',
-    'schedule': crontab(minute='*/2'),
-    },
-}
+# app.conf.beat_schedule = {
+#     'create-report-every-2-minute': {
+#     'task': 'core.tasks.create_report_task',
+#     'schedule': crontab(minute='*/2'),
+#     },
+# }

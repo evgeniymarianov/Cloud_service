@@ -13,6 +13,7 @@ class Network(models.Model):
 
 
 class VirtualMachine(models.Model):
+    id = models.IntegerField(null=False, default=0)
     create_date = models.DateTimeField(auto_now=True)
     cpu = models.IntegerField(null=False, verbose_name='Количество ядер центрального процессора')
     ram = models.IntegerField(null=False, verbose_name='Оперативная память')
@@ -26,6 +27,7 @@ class VirtualMachine(models.Model):
     hdd_capacity = models.IntegerField(null=False, verbose_name='Объём памяти жёсткого диска')
     current_user = models.ForeignKey(User, on_delete=models.PROTECT, null=True)
     networks = models.ManyToManyField(Network)
+    cost = models.IntegerField(null=False, default=0)
 
     def __str__(self):
         return 'cpu - %s, ram - %s, hdd_type - %s, hdd_capacity - %s' % (self.cpu ,self.ram ,self.hdd_type ,self.hdd_capacity)
@@ -36,6 +38,20 @@ class VirtualMachine(models.Model):
     class Meta:
         verbose_name='Виртуальную машину'
         verbose_name_plural='Виртуальные машины'
+
+
+class AdditionalHdd(models.Model):
+    create_date = models.DateTimeField(auto_now=True)
+    hdd_type = models.CharField(choices = (
+            ('sata', 'sata'),
+            ('ssd', 'ssd'),
+            ('sas', 'sas'),
+        ),
+        max_length=15, verbose_name='Тип жёсткого диска'
+    )
+    hdd_capacity = models.IntegerField(null=False, verbose_name='Объём памяти жёсткого диска')
+    virtual_machine = models.ForeignKey(VirtualMachine, on_delete=models.CASCADE)
+    cost = models.IntegerField(null=False, default=0)
 
 
 class Report(models.Model):
