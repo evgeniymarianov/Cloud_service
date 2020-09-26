@@ -13,7 +13,6 @@ class Network(models.Model):
 
 
 class VirtualMachine(models.Model):
-    id = models.IntegerField(null=False, default=0)
     create_date = models.DateTimeField(auto_now=True)
     cpu = models.IntegerField(null=False, verbose_name='Количество ядер центрального процессора')
     ram = models.IntegerField(null=False, verbose_name='Оперативная память')

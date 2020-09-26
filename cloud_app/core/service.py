@@ -91,26 +91,79 @@ class CheckService:
         pass
 
 
-def load_local_csv(path):
-    with open(str(path) + 'vms.csv') as f:
-        vms_csv = list(csv.reader(f))
-        print(vms_csv[:5])
+class CreateData:
+    """docstring for CreateData"""
+    def __init__(self):
+        data_path = '/data/csvs/'
+        self.loaded_data = self.load_local_csv(data_path)
+        self.create_virtual_machines(self.loaded_data)
 
-    with open(str(path) + 'prices.csv') as f:
-        prices = dict(csv.reader(f))
-        print(prices)
 
-    for key, value in prices.items():
-        if key in ['cpu', 'ram', 'hdd_capacity', 'ssd', 'sata', 'sas']:
-            prices[key] = int(value)
+    def load_local_csv(self, path):
+        with open(str(path) + 'vms.csv') as f:
+            virtual_machines_list = list(csv.reader(f))
+            for vm in virtual_machines_list:
+                for n in [0, 1, 2, 4]:
+                    vm[n] =  int(vm[n])
+            print(virtual_machines_list[:5])
+        with open(str(path) + 'prices.csv') as f:
+            price_list = dict(csv.reader(f))
+        for key, value in price_list.items():
+            if key in ['cpu', 'ram', 'hdd_capacity', 'ssd', 'sata', 'sas']:
+                price_list[key] = int(value)
+        with open(str(path) + 'volumes.csv') as f:
+            additional_hdds_list = list(csv.reader(f))
+            for hdd in additional_hdds_list:
+                for n in [0, 2]:
+                    hdd[n] =  int(hdd[n])
+            print(additional_hdds_list[:5])
+        loaded_data = {
+            'vms': virtual_machines_list,
+            'price_list': price_list,
+            'add_hdds': additional_hdds_list
+            }
+        return loaded_data
 
-    with open(str(path) + 'volumes.csv') as f:
-        vms_volumes = list(csv.reader(f))
 
-    ## for vm in vms_csv:
-    ##     new_virtual_machine = VirtualMachine(
-    ##         ram = int
-    ##     )
+    def create_virtual_machines(self, loaded_data):
+        price_list = loaded_data['price_list']
+        for vm in loaded_data['vms']:
+            new_vm = VirtualMachine.objects.create(
+                ram = vm[1],
+                cpu = vm[2],
+                hdd_type = str(vm[3]),
+                hdd_capacity = vm[4]
+            )
+        for hdd in loaded_data['add_hdds']:
+            new_hdd = AdditionalHdd.objects.create(
+                virtual_machine = VirtualMachine.objects.get(id=hdd[0]),
+                hdd_type = str(hdd[1]),
+                hdd_capacity = int(hdd[2])
+            )
+            new_hdd.cost = (new_hdd.hdd_capacity * price_list[new_hdd.hdd_type]) * 0.01
+        vms = VirtualMachine.objects.all()
+        for vm in vms:
+            print(vm.id)
+            print(vm.cost)
+            vm.cost = (vm.cpu * price_list['cpu'] + vm.ram * price_list['ram'] + vm.hdd_capacity * price_list[vm.hdd_type]) * 0.01
+            add_hdds = AdditionalHdd.objects.filter(virtual_machine=vm)
+            for hdd in add_hdds:
+                vm.cost += hdd.cost
+            print(vm.id)
+            print(vm.cost)
+            vm.save()
+        print(VirtualMachine.objects.get(id = 700).cost)
+        pass
+
+
+    def create_additional_hdds(self, loaded_data):
+        for hdd in loaded_data['add_hdds']:
+            new_hdd = AdditionalHdd(
+                virtual_machine = VirtualMachine.objects.get(int(id=hdd[0])),
+                hdd_type = str(vm[1]),
+                hdd_capacity = int(vm[2])
+            ).save()
+        pass
 
 
 def create_report(user_id):
