@@ -97,6 +97,7 @@ class CreateData:
         data_path = '/data/csvs/'
         self.loaded_data = self.load_local_csv(data_path)
         self.create_virtual_machines(self.loaded_data)
+        self.create_users()
 
 
     def load_local_csv(self, path):
@@ -125,6 +126,18 @@ class CreateData:
         return loaded_data
 
 
+    def create_users(self):
+        new_user1 = User.objects.create(
+            username = 'evgen1426',
+            password = 'fgjt[fkb005]'
+        )
+        new_user2 = User.objects.create(
+            username = 'evgen1427',
+            password = 'fgjt[fkb005]'
+        )
+        pass
+
+
     def create_virtual_machines(self, loaded_data):
         price_list = loaded_data['price_list']
         for vm in loaded_data['vms']:
@@ -134,7 +147,10 @@ class CreateData:
                 hdd_type = str(vm[3]),
                 hdd_capacity = vm[4]
             )
+            print('new_vm.id = ' + str(new_vm.id))
         for hdd in loaded_data['add_hdds']:
+            print('hdd = ' + str(hdd))
+            print('VirtualMachine.objects.get(id=hdd[0]) = ' + str(VirtualMachine.objects.get(id=hdd[0])))
             new_hdd = AdditionalHdd.objects.create(
                 virtual_machine = VirtualMachine.objects.get(id=hdd[0]),
                 hdd_type = str(hdd[1]),
@@ -143,26 +159,11 @@ class CreateData:
             new_hdd.cost = (new_hdd.hdd_capacity * price_list[new_hdd.hdd_type]) * 0.01
         vms = VirtualMachine.objects.all()
         for vm in vms:
-            print(vm.id)
-            print(vm.cost)
             vm.cost = (vm.cpu * price_list['cpu'] + vm.ram * price_list['ram'] + vm.hdd_capacity * price_list[vm.hdd_type]) * 0.01
             add_hdds = AdditionalHdd.objects.filter(virtual_machine=vm)
             for hdd in add_hdds:
                 vm.cost += hdd.cost
-            print(vm.id)
-            print(vm.cost)
             vm.save()
-        print(VirtualMachine.objects.get(id = 700).cost)
-        pass
-
-
-    def create_additional_hdds(self, loaded_data):
-        for hdd in loaded_data['add_hdds']:
-            new_hdd = AdditionalHdd(
-                virtual_machine = VirtualMachine.objects.get(int(id=hdd[0])),
-                hdd_type = str(vm[1]),
-                hdd_capacity = int(vm[2])
-            ).save()
         pass
 
 
