@@ -150,8 +150,8 @@ CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://redis:6379/0")
 CELERY_RESULT_BACKEND = os.environ.get("CELERY_BROKER", "redis://redis:6379/0")
 
 CELERY_BEAT_SCHEDULE = {
-    'create-report-every-2-minute': {
-    'task': 'core.tasks.create_report_task',
+    'create-reports-every-1-minute': {
+    'task': 'core.tasks.create_reports_task',
     'schedule': crontab(),
     },
 }

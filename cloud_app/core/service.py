@@ -3,6 +3,7 @@ from django.http import HttpResponse, QueryDict
 from .models import VirtualMachine, Report, User, AdditionalHdd
 import json
 import csv
+from random import choice
 
 
 class CheckService:
@@ -91,13 +92,13 @@ class CheckService:
         pass
 
 
-class CreateData:
-    """docstring for CreateData"""
+class CreateDataService:
+    """docstring for CreateDataService"""
     def __init__(self):
         data_path = '/data/csvs/'
+        self.create_users()
         self.loaded_data = self.load_local_csv(data_path)
         self.create_virtual_machines(self.loaded_data)
-        self.create_users()
 
 
     def load_local_csv(self, path):
@@ -142,27 +143,39 @@ class CreateData:
         price_list = loaded_data['price_list']
         for vm in loaded_data['vms']:
             new_vm = VirtualMachine.objects.create(
+                csv_id = vm[0],
                 ram = vm[1],
                 cpu = vm[2],
                 hdd_type = str(vm[3]),
                 hdd_capacity = vm[4]
             )
-            print('new_vm.id = ' + str(new_vm.id))
+            new_vm.current_user = choice(User.objects.all())
+            new_vm.save()
         for hdd in loaded_data['add_hdds']:
-            print('hdd = ' + str(hdd))
-            print('VirtualMachine.objects.get(id=hdd[0]) = ' + str(VirtualMachine.objects.get(id=hdd[0])))
+            #print('hdd = ' + str(hdd))
+            #print('VirtualMachine.objects.get(id=hdd[0]) = ' + str(VirtualMachine.objects.get(id=hdd[0])))
             new_hdd = AdditionalHdd.objects.create(
-                virtual_machine = VirtualMachine.objects.get(id=hdd[0]),
+                virtual_machine = VirtualMachine.objects.get(csv_id=hdd[0]),
+                csv_id = int(hdd[0]),
                 hdd_type = str(hdd[1]),
                 hdd_capacity = int(hdd[2])
             )
             new_hdd.cost = (new_hdd.hdd_capacity * price_list[new_hdd.hdd_type]) * 0.01
+            new_hdd.save()
         vms = VirtualMachine.objects.all()
         for vm in vms:
             vm.cost = (vm.cpu * price_list['cpu'] + vm.ram * price_list['ram'] + vm.hdd_capacity * price_list[vm.hdd_type]) * 0.01
+            vm.save()
+            print('vm.csv_id = ' + str(vm.csv_id))
+            print('vm.cost = ' + str(vm.cost))
             add_hdds = AdditionalHdd.objects.filter(virtual_machine=vm)
+            print('HDDS' + str(add_hdds))
             for hdd in add_hdds:
+                print(hdd.csv_id)
                 vm.cost += hdd.cost
+                vm.save()
+                print('vm.csv_id2222222222 = ' + str(vm.csv_id))
+                print('vm.NEW_cost = ' + str(vm.cost))
             vm.save()
         pass
 
@@ -172,8 +185,37 @@ def create_report(user_id):
     user = User.objects.get(id=user_id)
     vms = VirtualMachine.objects.filter(current_user=user)
     print('!!!!!!!!!!!!!!service')
-    q = Report(text="It's ok?")
-    q.save()
+    # q = Report(text="It's ok?")
+    # q.save()
     print(vms)
     print(q)
     pass
+
+
+class CreateReportService:
+    """docstring for CreateReportService"""
+    def __init__(self):
+        for user in User.objects.all():
+            report = Report.objects.create(current_user = user)
+            report.most_cheapest = self.most_cheapest(user)
+            report.most_expensive = self.most_expensive(user)
+            print(report)
+            #report.most_capacious = self.most_capacious(user.id)
+            #report.most_additional_hdds_by_number = self.most_additional_hdds_by_number(user.id)
+            #report.most_additional_hdds_by_capacity = self.most_additional_hdds_by_capacity(user.id)
+
+
+    def most_cheapest(self, user):
+        print('++++++++++++++++start most_cheapest')
+        most_cheapest = VirtualMachine.objects.filter(current_user=user).order_by('-cost')[:5]
+        return str(most_cheapest)
+
+
+    def most_expensive(self, user):
+        print('000000000000000000000start most_expensive')
+        most_expensive = VirtualMachine.objects.filter(current_user=user).order_by('cost')[:5]
+        return str(most_expensive)
+
+
+    def most_capacious(self, user_id, type):
+        pass

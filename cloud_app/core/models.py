@@ -14,6 +14,7 @@ class Network(models.Model):
 
 class VirtualMachine(models.Model):
     create_date = models.DateTimeField(auto_now=True)
+    csv_id = models.IntegerField(null=False, default=0)
     cpu = models.IntegerField(null=False, verbose_name='Количество ядер центрального процессора')
     ram = models.IntegerField(null=False, verbose_name='Оперативная память')
     hdd_type = models.CharField(choices = (
@@ -29,7 +30,7 @@ class VirtualMachine(models.Model):
     cost = models.IntegerField(null=False, default=0)
 
     def __str__(self):
-        return 'cpu - %s, ram - %s, hdd_type - %s, hdd_capacity - %s' % (self.cpu ,self.ram ,self.hdd_type ,self.hdd_capacity)
+        return 'csv_id - %s, user - %s, cpu - %s, ram - %s, hdd_type - %s, hdd_capacity - %s, cost - %s, AdditionalHdds - %s' % (self.csv_id ,self.current_user ,self.cpu ,self.ram ,self.hdd_type ,self.hdd_capacity, self.cost, self.additionalhdd_set.all())
 
     def get_absolute_url(self):
         return reverse('detail', args=[str(self.id)])
@@ -41,6 +42,7 @@ class VirtualMachine(models.Model):
 
 class AdditionalHdd(models.Model):
     create_date = models.DateTimeField(auto_now=True)
+    csv_id = models.IntegerField(null=False, default=0)
     hdd_type = models.CharField(choices = (
             ('sata', 'sata'),
             ('ssd', 'ssd'),
@@ -55,5 +57,13 @@ class AdditionalHdd(models.Model):
 
 class Report(models.Model):
     """docstring forReport."""
+    current_user = models.ForeignKey(User, on_delete=models.PROTECT, null=True)
     create_date = models.DateTimeField(auto_now=True)
-    text = models.TextField(max_length=300, null=False, default='Russia')
+    most_cheapest = models.TextField(max_length=3000, null=False, default='')
+    most_expensive = models.TextField(max_length=3000, null=False, default='')
+    most_capacious = models.TextField(max_length=3000, null=False, default='')
+    most_additional_hdds_by_number = models.TextField(max_length=3000, null=False, default='')
+    most_additional_hdds_by_capacity = models.TextField(max_length=3000, null=False, default='')
+
+    def __str__(self):
+        return 'user - %s, most_cheapest - %s, most_expensive - %s' % (self.current_user ,self.most_cheapest, self.most_expensive)
