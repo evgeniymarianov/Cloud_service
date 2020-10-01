@@ -66,4 +66,4 @@ class Report(models.Model):
     most_additional_hdds_by_capacity = models.TextField(max_length=3000, null=False, default='')
 
     def __str__(self):
-        return 'user - %s, most_cheapest - %s, most_expensive - %s' % (self.current_user ,self.most_cheapest, self.most_expensive)
+        return 'user - %s, most_cheapest - %s, most_expensive - %s, most_capacious - %s, most_additional_hdds_by_number - %s, most_additional_hdds_by_capacity - %s' % (self.current_user ,self.most_cheapest, self.most_expensive, self.most_capacious, self.most_additional_hdds_by_number, self.most_additional_hdds_by_capacity)

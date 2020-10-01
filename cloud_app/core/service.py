@@ -4,6 +4,7 @@ from .models import VirtualMachine, Report, User, AdditionalHdd
 import json
 import csv
 from random import choice
+from django.db.models import Sum
 
 
 class CheckService:
@@ -199,6 +200,9 @@ class CreateReportService:
             report = Report.objects.create(current_user = user)
             report.most_cheapest = self.most_cheapest(user)
             report.most_expensive = self.most_expensive(user)
+            report.most_capacious = self.most_capacious(user, 'sata')
+            report.most_additional_hdds_by_number = self.most_additional_hdds_by_number(user, 'sata')
+            report.most_additional_hdds_by_capacity = self.most_additional_hdds_by_capacity(user, 'sata')
             print(report)
             #report.most_capacious = self.most_capacious(user.id)
             #report.most_additional_hdds_by_number = self.most_additional_hdds_by_number(user.id)
@@ -207,15 +211,49 @@ class CreateReportService:
 
     def most_cheapest(self, user):
         print('++++++++++++++++start most_cheapest')
-        most_cheapest = VirtualMachine.objects.filter(current_user=user).order_by('-cost')[:5]
-        return str(most_cheapest)
+        vms = VirtualMachine.objects.filter(current_user=user).order_by('-cost')[:5]
+        text = ''
+        for vm in vms:
+            text += str(vm) + "\n"
+        return text
 
 
     def most_expensive(self, user):
         print('000000000000000000000start most_expensive')
-        most_expensive = VirtualMachine.objects.filter(current_user=user).order_by('cost')[:5]
-        return str(most_expensive)
+        vms = VirtualMachine.objects.filter(current_user=user).order_by('cost')[:5]
+        text = ''
+        for vm in vms:
+            text += str(vm) + "\n"
+        return text
 
 
-    def most_capacious(self, user_id, type):
-        pass
+    def most_capacious(self, user, type):
+        vms = VirtualMachine.objects.filter(current_user=user)
+        text = ''
+        for vm in vms:
+            vm.volume = 0
+            if vm.hdd_type == type:
+                vm.volume += vm.hdd_capacity
+            for hdd in vm.additionalhdd_set.all():
+                if hdd.hdd_type == type:
+                    vm.volume += hdd.hdd_capacity
+            text += 'CSV_ID = ' + str(vm.csv_id) + '   VOLUME = ' + str(vm.volume) + "\n"
+        return text
+
+
+    def most_additional_hdds_by_number(self, user, type):
+        vms = VirtualMachine.objects.filter(current_user=user)
+        text = ''
+        for vm in vms:
+            vm.num_of_hdd = vm.additionalhdd_set.filter(hdd_type=type).count()
+            text += 'CSV_ID = ' + str(vm.csv_id) + '   NUM_OF_HDD = ' + str(vm.num_of_hdd) + "\n"
+        return text
+
+
+    def most_additional_hdds_by_capacity(self, user, type):
+        vms = VirtualMachine.objects.filter(current_user=user)
+        text = ''
+        for vm in vms:
+            vm.capacity_of_type = vm.additionalhdd_set.filter(hdd_type=type).aggregate(Sum('hdd_capacity'))['hdd_capacity__sum']
+            text += 'CSV_ID = ' + str(vm.csv_id) + '   CAPACITY_OF_HDD = ' + str(vm.capacity_of_type) + "\n"
+        return text
