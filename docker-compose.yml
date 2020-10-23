@@ -41,7 +41,7 @@ services:
       - redis
 
   cost_service:
-    image: cost_s6
+    build: ./cost_service
     ports:
       - 5000:5000
 
@@ -56,3 +56,12 @@ services:
       - "6379:6379"
     volumes:
       - ./redis:/data
+
+  rabbit:
+    image: rabbitmq:latest
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=async_python
+      - RABBITMQ_DEFAULT_PASSWORD=12345
+    ports:
+      - "15672:15672"

@@ -4,7 +4,7 @@ from celery.schedules import crontab
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cloud_app.settings')
 
-app = Celery('cloud_app')
+app = Celery('cloud_app', broker='amqp://async_python:12345@localhost:15672')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
 

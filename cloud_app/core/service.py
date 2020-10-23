@@ -131,7 +131,7 @@ class CreateDataService:
 
     def create_users(self):
         new_user1 = User.objects.create(
-            username = 'evgen1426',
+            username = 'evgen1428',
             password = 'fgjt[fkb005]'
         )
         new_user2 = User.objects.create(
@@ -168,16 +168,11 @@ class CreateDataService:
         for vm in vms:
             vm.cost = (vm.cpu * price_list['cpu'] + vm.ram * price_list['ram'] + vm.hdd_capacity * price_list[vm.hdd_type]) * 0.01
             vm.save()
-            print('vm.csv_id = ' + str(vm.csv_id))
-            print('vm.cost = ' + str(vm.cost))
             add_hdds = AdditionalHdd.objects.filter(virtual_machine=vm)
             print('HDDS' + str(add_hdds))
             for hdd in add_hdds:
-                print(hdd.csv_id)
                 vm.cost += hdd.cost
                 vm.save()
-                print('vm.csv_id2222222222 = ' + str(vm.csv_id))
-                print('vm.NEW_cost = ' + str(vm.cost))
             vm.save()
         pass
 
@@ -201,17 +196,15 @@ class CreateReportService:
             report = Report.objects.create(current_user = user)
             report.most_cheapest = self.most_cheapest(user, num=5)
             report.most_expensive = self.most_expensive(user, num=5)
-            report.most_capacious = self.most_capacious(user, num=10)
-            report.most_additional_hdds_by_number = self.most_additional_hdds_by_number(user, num=10)
-            report.most_additional_hdds_by_capacity = self.most_additional_hdds_by_capacity(user, num=10)
+            report.most_capacious = self.most_capacious(user, type='sata', num=10)
+            report.most_additional_hdds_by_number = self.most_additional_hdds_by_number(user, type='sata', num=10)
+            report.most_additional_hdds_by_capacity = self.most_additional_hdds_by_capacity(user, type='sata', num=10)
+            report.save()
             print(user)
             print(report)
-            #report.most_capacious = self.most_capacious(user.id)
-            #report.most_additional_hdds_by_number = self.most_additional_hdds_by_number(user.id)
-            #report.most_additional_hdds_by_capacity = self.most_additional_hdds_by_capacity(user.id)
 
 
-    def most_cheapest(self, user, num=3):
+    def most_cheapest(self, user, num=5):
         print('++++++++++++++++start most_cheapest')
         vms = VirtualMachine.objects.filter(current_user=user).order_by('-cost')[:num]
         text = ''
@@ -220,7 +213,7 @@ class CreateReportService:
         return text
 
 
-    def most_expensive(self, user, num=3):
+    def most_expensive(self, user, num=5):
         print('000000000000000000000start most_expensive')
         vms = VirtualMachine.objects.filter(current_user=user).order_by('cost')[:num]
         text = ''
@@ -229,7 +222,7 @@ class CreateReportService:
         return text
 
 
-    def most_capacious(self, user, type=None, num=3):
+    def most_capacious(self, user, type=None, num=5):
         text = ''
         vms = VirtualMachine.objects.filter(current_user=user)
         for vm in vms:
@@ -247,12 +240,12 @@ class CreateReportService:
                 hdds_volume = vm.additionalhdd_set.filter(hdd_type=type).aggregate(Sum('hdd_capacity'))['hdd_capacity__sum']
                 if hdds_volume:
                     vm.volume += hdds_volume
-        for vm in sorted(vms, reverse = True, key=attrgetter('volume')):#[:num]:
+        for vm in sorted(vms, reverse = True, key=attrgetter('volume'))[:num]:
             text += 'CSV_ID = ' + str(vm.csv_id) + '   VOLUME = ' + str(vm.volume) + "\n"
         return text
 
 
-    def most_additional_hdds_by_number(self, user, type=None, num=3):
+    def most_additional_hdds_by_number(self, user, type=None, num=5):
         text = ''
         vms = VirtualMachine.objects.filter(current_user=user)
         if not type:
@@ -261,12 +254,12 @@ class CreateReportService:
         else:
             for vm in vms:
                 vm.num_of_hdd = vm.additionalhdd_set.filter(hdd_type=type).count()
-        for vm in sorted(vms, reverse = True, key=attrgetter('num_of_hdd')):#[:num]:
+        for vm in sorted(vms, reverse = True, key=attrgetter('num_of_hdd'))[:num]:
             text += 'CSV_ID = ' + str(vm.csv_id) + '   NUM_OF_HDD = ' + str(vm.num_of_hdd) + "\n"
         return text
 
 
-    def most_additional_hdds_by_capacity(self, user, type=None, num=3):
+    def most_additional_hdds_by_capacity(self, user, type=None, num=5):
         text = ''
         vms = VirtualMachine.objects.filter(current_user=user)
         for vm in vms:
@@ -281,6 +274,6 @@ class CreateReportService:
                 hdds_capacity = vm.additionalhdd_set.aggregate(Sum('hdd_capacity'))['hdd_capacity__sum']
                 if hdds_capacity:
                     vm.capacity += hdds_capacity
-        for vm in sorted(vms, reverse = True, key=attrgetter('capacity')):#[:num]:
+        for vm in sorted(vms, reverse = True, key=attrgetter('capacity'))[:num]:
             text += 'CSV_ID = ' + str(vm.csv_id) + '   VOLUME = ' + str(vm.capacity) + "\n"
         return text

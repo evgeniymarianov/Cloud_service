@@ -7,8 +7,22 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse, reverse_lazy
 from django.http import HttpResponse
 from .service import CheckService, create_report
-# from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 import requests
+from django.contrib import messages
+
+
+class CustomSuccessMessageMixin:
+    @property
+    def success_msg(self):
+        return False
+
+    def form_valid(self,form):
+        messages.success(self.request, self.success_msg)
+        return super().form_valid(form)
+    def get_success_url(self):
+        return '%s?id=%s' % (self.success_url, self.object.id)
+
 
 def home(request):
     context = {
@@ -75,7 +89,8 @@ class HomeDetailView(DetailView):
     context_object_name = 'get_virtual_machine'
     # form = VirtualMachineForm()
 
-class VirtualMachineCreateView(CreateView): # новое изменение
+class VirtualMachineCreateView(LoginRequiredMixin, CustomSuccessMessageMixin, CreateView): # новое изменение
+    login_url = reverse_lazy('login_page')
     model = VirtualMachine
     template_name = 'virtual_machine_new.html'
     fields = ['cpu', 'ram', 'hdd_type', 'hdd_capacity']

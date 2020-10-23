@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from core.models import VirtualMachine
+from core.models import VirtualMachine, AdditionalHdd, User, Report, Network
 
 
 class VirtualMachineListSerializer(serializers.ModelSerializer):
@@ -18,9 +18,25 @@ class VirtualMachineListSerializer(serializers.ModelSerializer):
     def get_some(self, obj):
         return 'hi'
 
+
 class VirtualMachineDetailSerializer(serializers.ModelSerializer):
     networks = serializers.SlugRelatedField(slug_field="name", read_only=True, many=True)
     current_user = serializers.SlugRelatedField(slug_field="username", read_only=True)
     class Meta:
         model = VirtualMachine
+        fields = '__all__'
+
+
+class ReportSerializer(serializers.ModelSerializer):
+    """Полный отчёт"""
+
+    class Meta:
+        model = Report
+        fields = "__all__"
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    reports = ReportSerializer(many=True)
+    class Meta:
+        model = User
         fields = '__all__'

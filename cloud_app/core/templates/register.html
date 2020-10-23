@@ -1,9 +1,14 @@
-{% block content %}
-    <h1>Регистрация</h1>
-      <form id="add_form" method="post">
-        {% csrf_token %}
-        {{form}}
-      <div class="modal-footer">
-      <button type="submit" class="btn btn-primary">Добавить</button>
-    </form>
-{% endblock content %}
+{% extends 'base.html' %}
+
+    {% block content %}
+    <h1 class="mt-4">Регистрация</h1>
+    <p><a href="/">Вернуться назад</a></p>
+<div class="col-4">
+<form id="add_form" method="post">
+            {% csrf_token %}
+            {{form}}
+            <button form="add_form" type="submit" class="btn btn-primary mt-4">Вперёд</button>
+        </form>
+
+</div>
+{% endblock %}

@@ -20,6 +20,6 @@ def hello():
 @shared_task
 def create_reports_task():
     print('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< create_data')
-    data = CreateDataService()
+    #data = CreateDataService()
     print('!!!!!!!!!!!!!!create_reports_task start')
     reports = CreateReportService()

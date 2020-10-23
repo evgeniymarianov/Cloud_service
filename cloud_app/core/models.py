@@ -57,7 +57,7 @@ class AdditionalHdd(models.Model):
 
 class Report(models.Model):
     """docstring forReport."""
-    current_user = models.ForeignKey(User, on_delete=models.PROTECT, null=True)
+    current_user = models.ForeignKey(User, on_delete=models.PROTECT, null=True, related_name="reports")
     create_date = models.DateTimeField(auto_now=True)
     most_cheapest = models.TextField(max_length=3000, null=False, default='')
     most_expensive = models.TextField(max_length=3000, null=False, default='')
